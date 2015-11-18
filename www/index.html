@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Transliteration of Belarusian geographical names with letters of Latin script</title>
+<SCRIPT LANGUAGE="JavaScript">
+<!--//
+
+/**
+ * @author Viktar Palstsiuk <vipals@gmail.com>
+ */
+
+function transliterateField(frm) {
+	frm.resultName.value = transliterate(frm.firstName.value);
+}
+
+function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function transliterate(word) {
+	var C = {};
+	var V = {};
+	var I = {};
+	var J = {};
+	var P = {};
+	var out = '';
+	var prev = "а";
+	var SOFT = "ь";
+	var APO = "'";
+	var APO2 = "’";
+	
+	C["б"]="b"; C["в"]="v"; C["г"]="h"; C["д"]="d"; C["ж"]="ž"; C["з"]="z"; C["й"]="j"; C["к"]="k";
+	C["л"]="l"; C["м"]="m"; C["н"]="n"; C["п"]="p"; C["р"]="r"; C["с"]="s"; C["т"]="t"; C["ф"]="f"; 
+	C["х"]="ch"; C["ч"]="č"; C["ц"]="c"; C["ш"]="š"; C["ь"]=""; C["ґ"]="g"; C[APO]=""; C[APO2]=""; 
+
+	V["а"]="a"; V["э"]="e"; V["о"]="o"; V["у"]="u"; V["и"]="i"; V["i"]="i"; V["ы"]="y"; V["ў"]="ŭ";
+	V["щ"]="ŭ";
+	
+	I["я"]="ia"; I["е"]="ie"; I["ё"]="io"; I["ю"]="iu";
+	J["я"]="ja"; J["е"]="je"; J["ё"]="jo"; J["ю"]="ju";
+
+	P["з"]="ź"; P["л"]="ĺ"; P["н"]="ń"; P["с"]="ś"; P["ц"]="ć"; 
+
+	for (var i = 0; i < word.length; i++) {
+		var curr = word.charAt(i);
+		var low = curr.toLowerCase();
+		var next = word.charAt(i+1);
+		var result = '';
+		if (C[low] || low == SOFT || low == APO || low == APO2) {
+			if (next.toLowerCase() == SOFT)
+				result = P[low] || C[low];
+			else
+				result = C[low];
+		}
+		else { // Vowvels
+			if (C[prev])
+				result = V[low] || I[low] || curr;
+			else
+				result = V[low] || J[low] || curr;
+			if ((prev == APO || prev == APO2) && (low == "i" || low == "и"))
+				result = "ji";
+		}
+		prev = low;
+		if (curr == low)
+			out += result;
+		else {
+			if (next == next.toLowerCase())
+				out += capitaliseFirstLetter(result);
+			else 
+				out += result.toUpperCase();
+		}
+	}
+	return out;
+}
+//-->
+</SCRIPT>
+</HEAD>
+
+<BODY>
+<FORM NAME="test">
+<H3>Transliteration of Belarusian geographical names with letters of Latin script</H3>
+<P>Belarusian geographical name:</P>
+<P><TEXTAREA ROWS=7 COLS=75 NAME="firstName" onchange="transliterateField(this.form)">
+Аршанскi, Бешанковiчы, Вiцебск, Гомель, Гаўя, Добруш, Ельск,
+Венцавiчы, Ёды, Вераб'ёвiчы, Мёры, Жодзiшкi, Зэльва, Iванава, Iўе,
+Лагойск, Круглае, Лошыца, Магiлёў, Нясвiж, Орша, Паставы, Рагачоў,
+Светлагорск, Талачын, Узда, Шаркаўшчына, Фанiпаль, Хоцiмск, Цёмны Лес,
+Чавусы, Шумiлiна, Чыгiрынка, Чэрвень, Друць, Чачэрск, Юхнаўка,
+Гаюцiна, Цюрлi, Любонiчы, Ямнае, Баяры, Валяр'яны, Вязынка
+</TEXTAREA></P>
+<P>Name in Latin script:</P>
+<P><TEXTAREA ROWS=7 COLS=75 NAME="resultName"></TEXTAREA></P>
+<P><INPUT TYPE="BUTTON" VALUE="Transliterate" ONCLICK='transliterateField(this.form)'></P>
+</FORM>
+
+<P><a href="http://en.wikipedia.org/wiki/Instruction_on_transliteration_of_Belarusian_geographical_names_with_letters_of_Latin_script">Instruction on transliteration of Belarusian geographical names with letters of Latin script</a></P>
+
+</BODY>
+</HTML>
