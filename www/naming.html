@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>script</title>
+<SCRIPT LANGUAGE="JavaScript">
+<!--//
+
+/**
+ * @author Viktar Palstsiuk <vipals@gmail.com>
+ */
+
+function transliterateField(frm) {
+	res = frm.sourceText.value;
+    res = fixNames(res);
+    res = fixBrackets(res);
+    res = fixYear(res);
+    frm.resultName.value = res;
+}
+
+function fixYear(text) {
+    return text.replace(" год]]", "]] год");
+}
+
+function fixBrackets(text) {
+	var out = '';
+	var webLinkFlag = false;
+	var lastNameFlag = false;
+	var lastName = '';
+    var prev = "a";
+
+	for (var i = 0; i < text.length; i++) {
+		var curr = text.charAt(i);
+        var next = text.charAt(i+1);
+			
+		if (curr != "[" && prev == "[") {
+			webLinkFlag = true;
+		}
+
+		if (webLinkFlag) {
+            if (curr == " " && next == "(") {
+                curr = ", ";
+                i++;
+            }
+            
+            if (next == "|" || next == "]") {
+                webLinkFlag = false;
+                if (curr == ")")
+                    curr = "";
+            }
+		}
+        
+        out += curr;
+        
+        prev = curr;
+	}
+	return out;
+}
+
+function fixNames(text) {
+	var out = '';
+	var webLinkFlag = false;
+	var lastNameFlag = false;
+	var lastName = '';
+    var prev = "a";
+
+	for (var i = 0; i < text.length; i++) {
+		var curr = text.charAt(i);
+        var next = text.charAt(i+1);
+			
+		if (curr != "[" && prev == "[") {
+			webLinkFlag = true;
+			lastNameFlag = true;
+            lastName = '';
+		}
+
+		if (webLinkFlag) {
+            if (curr == ",") {
+                lastNameFlag = false;
+                curr = "";
+                if (next == " ")
+                    i++;
+            }
+            
+            if (curr == "|" || curr == "]") {
+                webLinkFlag = false;
+                if (!lastNameFlag) out += " ";
+                lastNameFlag = false;
+                
+                out += lastName;
+                lastName = '';
+            }
+		}
+        
+		if (lastNameFlag && curr != "]") {
+			lastName += curr;
+		}
+		else
+		{
+			out += curr;
+		}
+        
+        prev = curr;
+	}
+	return out;
+}
+//-->
+</SCRIPT>
+</HEAD>
+
+<BODY>
+<FORM NAME="test">
+<P>Source:</P>
+<P><TEXTAREA ROWS=20 COLS=170 NAME="sourceText" onchange="transliterateField(this.form)">
+1543434563
+
+</TEXTAREA></P>
+<P>Result:</P>
+<P><TEXTAREA ROWS=20 COLS=170 NAME="resultName"></TEXTAREA></P>
+<P><INPUT TYPE="BUTTON" VALUE="Process" ONCLICK='transliterateField(this.form)'></P>
+</FORM>
+
+</BODY>
+</HTML>
