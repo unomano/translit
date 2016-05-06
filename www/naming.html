@@ -18,7 +18,8 @@ function transliterateField(frm) {
 }
 
 function fixYear(text) {
-    return text.replace(/ год]]/g, "]] год");
+	src = text.replace(/\u00A0/g, ' ')
+    return src.replace(/ год]]/g, "]] год");
 }
 
 function fixBrackets(text) {
