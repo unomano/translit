@@ -89,6 +89,11 @@ function fixNames(text) {
                 out += lastName;
                 lastName = '';
             }
+			
+			if (prev == ":") {
+                out += lastName;
+                lastName = '';
+            }
 		}
         
 		if (lastNameFlag && curr != "]") {
@@ -114,6 +119,7 @@ function fixNames(text) {
 1. [[Фамилия, Имя Отчество]]
 2. [[Минск (Беларусь)]]
 3. с [[2000 год]]а
+4. [[Категория:Фамилия, Имя Отчество]]
 
 </TEXTAREA></P>
 <P>Result:</P>
