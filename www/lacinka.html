@@ -1,0 +1,114 @@
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Transliteration of Belarusian with letters of Latin script</title>
+<SCRIPT LANGUAGE="JavaScript">
+<!--//
+
+/**
+ * @author Viktar Palstsiuk <vipals@gmail.com>
+ */
+
+function transliterateField(frm) {
+	res = transliterate(frm.firstName.value);
+	res = fixApo(res);
+	frm.resultName.value = res;
+}
+
+function fixApo(text) {
+	src = text.replace(/\\\'j/g, 'j')
+    return src.replace(/\'j/g, 'j')
+}
+
+function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function transliterate(word) {
+	var C = {};
+	var L = {};
+	var V = {};
+	var I = {};
+	var J = {};
+	var P = {};
+	var out = '';
+	var prev = "а";
+	var SOFT = "ь";
+	var APO = "'";
+	var APO2 = "’";
+	
+	C["б"]="b"; C["в"]="v"; C["г"]="h"; C["д"]="d"; C["ж"]="ž"; C["з"]="z"; C["й"]="j"; C["к"]="k";
+	C["л"]="ł"; C["м"]="m"; C["н"]="n"; C["п"]="p"; C["р"]="r"; C["с"]="s"; C["т"]="t"; C["ф"]="f"; 
+	C["х"]="ch"; C["ч"]="č"; C["ц"]="c"; C["ш"]="š"; C["ь"]=""; C["ґ"]="g";
+
+	V["а"]="a"; V["э"]="e"; V["о"]="o"; V["у"]="u"; V["и"]="i"; V["i"]="i"; V["ы"]="y"; V["ў"]="ŭ";
+	V["щ"]="ŭ";
+	
+	I["я"]="ia"; I["е"]="ie"; I["ё"]="io"; I["ю"]="iu";
+	J["я"]="ja"; J["е"]="je"; J["ё"]="jo"; J["ю"]="ju";
+	L["я"]="a"; L["е"]="e"; L["ё"]="o"; L["ю"]="u"; L["і"]="i";
+
+	P["з"]="ź"; P["л"]="l"; P["н"]="ń"; P["с"]="ś"; P["ц"]="ć"; 
+
+	for (var i = 0; i < word.length; i++) {
+		var curr = word.charAt(i);
+		var low = curr.toLowerCase();
+		var next = word.charAt(i+1);
+		var result = '';
+		if (C[low] || low == SOFT) {
+			if (next.toLowerCase() == SOFT)
+				result = P[low] || C[low];
+			else
+				result = C[low];
+			if (low == "л" && L[next.toLowerCase()])
+				result = "l";
+		}
+		else { // Vowvels
+			if (C[prev])
+				result = V[low] || I[low] || curr;
+			else
+				result = V[low] || J[low] || curr;
+			if ((prev == APO || prev == APO2) && (low == "i" || low == "и"))
+				result = "ji";
+			if (prev == "л" && L[low])
+				result = L[low];				
+		}
+		prev = low;
+		if (curr == low)
+			out += result;
+		else {
+			if (next == next.toLowerCase())
+				out += capitaliseFirstLetter(result);
+			else 
+				out += result.toUpperCase();
+		}
+	}
+	return out;
+}
+//-->
+</SCRIPT>
+</HEAD>
+
+<BODY>
+<FORM NAME="test">
+<P>Belarusian:</P>
+<P><TEXTAREA ROWS=20 COLS=120 NAME="firstName" onchange="transliterateField(this.form)">
+Маршрут пасьпяхова захаваны як \'%1$s\'.
+%1$d з %2$d аб\'ектаў пасьпяхова актываваныя.
+Для гэтага рэгіёну даступныя лякальныя вэктарныя мапы.\n\t\n\tДля іх выкарыстаньня абярыце пункт мэню \'Налада мапы\' → \'Крыніца мапы…\' → \'Лякальныя вэктарныя мапы\'.
+Аршанскі, Бешанковічы, Віцебск, Гомель, Гаўя, Добруш, Ельск,
+Венцавічы, Ёды, Вераб'ёвічы, Мёры, Жодзішкі, Зэльва, Iванава, Iўе,
+Лагойск, Круглае, Лошыца, Магілёў, Нясвіж, Орша, Паставы, Рагачоў,
+Светлагорск, Талачын, Узда, Шаркаўшчына, Фаніпаль, Хоцімск, Цёмны Лес,
+Чавусы, Шуміліна, Чыгірынка, Чэрвень, Друць, Чачэрск, Юхнаўка,
+Гаюціна, Цюрлі, Любонічы, Ямнае, Баяры, Валяр'яны, Вязынка
+</TEXTAREA></P>
+<P>in Latin script:</P>
+<P><TEXTAREA ROWS=20 COLS=120 NAME="resultName"></TEXTAREA></P>
+<P><INPUT TYPE="BUTTON" VALUE="Transliterate" ONCLICK='transliterateField(this.form)'></P>
+</FORM>
+
+<P><a href="https://en.wikipedia.org/wiki/Belarusian_Latin_alphabet">Belarusian Latin alphabet</a></P>
+
+</BODY>
+</HTML>
