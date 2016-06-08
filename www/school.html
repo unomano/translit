@@ -18,18 +18,18 @@ function transliterateField(frm) {
     frm.resultName.value = res;
 }
 
-function fixSpelling(text) {
-	src = text.replace(/дзтв/g, 'дcтв')
-	src = src.replace(/дзьдз/g, 'ддз')	
-	src = src.replace(/травень/g, 'май')	
-	src = src.replace(/траўня/g, 'мая')	
-	src = src.replace(/зь /g, 'з ')	
-    return src;
-}
-
 function fixYear(text) {
 	src = text.replace(/\u00A0/g, ' ')
     return src.replace(/ год]]/g, "]] год");
+}
+
+function fixSpelling(t) {
+	t = t.replace(/дзтв/g, 'дcтв')
+	t = t.replace(/дзьдз/g, 'ддз')	
+	t = t.replace(/травень/g, 'май')	
+	t = t.replace(/траўня/g, 'мая')	
+	t = t.replace(/зь /g, 'з ')	
+    return t;
 }
 
 function fixBrackets(text) {
@@ -70,6 +70,7 @@ function fixBrackets(text) {
 function fixSoft(text) {
 	var out = '';
     var prev = "a";
+    var preprev = "a";
 	
 	var L = {};
 	var C = {};
@@ -86,7 +87,7 @@ function fixSoft(text) {
 		if (prev.toLowerCase() == "ь") {
 			if (!(C[curr.toLowerCase()] && L[next.toLowerCase()]))
 			{
-				if (L[curr.toLowerCase()])
+				if (L[curr.toLowerCase()] && (preprev.toLowerCase() == "з"))
 					out += "'";
 				else out += prev;
 			}
@@ -94,7 +95,8 @@ function fixSoft(text) {
 		
         if (curr.toLowerCase() != "ь")
 			out += curr;
-        
+            
+        preprev = prev;        
         prev = curr;
 	}
 	
