@@ -1,0 +1,119 @@
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>script</title>
+<SCRIPT LANGUAGE="JavaScript">
+<!--//
+
+/**
+ * @author Viktar Palstsiuk <vipals@gmail.com>
+ */
+
+function transliterateField(frm) {
+	res = frm.sourceText.value;
+    res = fixYear(res);	
+    res = fixSpelling(res);
+    res = fixBrackets(res);
+    res = fixSoft(res);	
+    frm.resultName.value = res;
+}
+
+function fixSpelling(text) {
+	src = text.replace(/дзтв/g, 'дcтв')
+	src = src.replace(/дзьдз/g, 'ддз')	
+	src = src.replace(/травень/g, 'май')	
+	src = src.replace(/траўня/g, 'мая')	
+	src = src.replace(/зь /g, 'з ')	
+    return src;
+}
+
+function fixYear(text) {
+	src = text.replace(/\u00A0/g, ' ')
+    return src.replace(/ год]]/g, "]] год");
+}
+
+function fixBrackets(text) {
+	var out = '';
+	var webLinkFlag = false;
+	var lastNameFlag = false;
+	var lastName = '';
+    var prev = "a";
+
+	for (var i = 0; i < text.length; i++) {
+		var curr = text.charAt(i);
+        var next = text.charAt(i+1);
+			
+		if (curr != "[" && prev == "[") {
+			webLinkFlag = true;
+		}
+
+		if (webLinkFlag) {
+            if (curr == " " && next == "(") {
+                curr = ", ";
+                i++;
+            }
+            
+            if (next == "|" || next == "]") {
+                webLinkFlag = false;
+                if (curr == ")")
+                    curr = "";
+            }
+		}
+        
+        out += curr;
+        
+        prev = curr;
+	}
+	return out;
+}
+
+function fixSoft(text) {
+	var out = '';
+    var prev = "a";
+	
+	var L = {};
+	var C = {};
+	
+	L["я"]="a"; L["е"]="e"; L["ё"]="o"; L["ю"]="u"; L["і"]="i"; L["ь"]="i"
+	C["б"]="b"; C["в"]="v"; C["г"]="h"; C["д"]="d"; C["ж"]="ž"; C["з"]="z"; C["й"]="j"; C["к"]="k";
+	C["л"]="ł"; C["м"]="m"; C["н"]="n"; C["п"]="p"; C["р"]="r"; C["с"]="s"; C["т"]="t"; C["ф"]="f"; 
+	C["х"]="ch"; C["ч"]="č"; C["ц"]="c"; C["ш"]="š"; C["ь"]=""; C["ґ"]="g";	
+	
+	for (var i = 0; i < text.length; i++) {
+		var curr = text.charAt(i);
+        var next = text.charAt(i+1);
+			
+		if (prev.toLowerCase() == "ь") {
+			if (!(C[curr.toLowerCase()] && L[next.toLowerCase()]))
+			{
+				if (L[curr.toLowerCase()])
+					out += "'";
+				else out += prev;
+			}
+		}
+		
+        if (curr.toLowerCase() != "ь")
+			out += curr;
+        
+        prev = curr;
+	}
+	
+	return out;
+}
+//-->
+</SCRIPT>
+</HEAD>
+
+<BODY>
+<FORM NAME="test">
+<P>Source:</P>
+<P><TEXTAREA ROWS=20 COLS=170 NAME="sourceText" onchange="transliterateField(this.form)">
+ёсьць
+</TEXTAREA></P>
+<P>Result:</P>
+<P><TEXTAREA ROWS=20 COLS=170 NAME="resultName"></TEXTAREA></P>
+<P><INPUT TYPE="BUTTON" VALUE="Process" ONCLICK='transliterateField(this.form)'></P>
+</FORM>
+
+</BODY>
+</HTML>
