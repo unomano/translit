@@ -18,17 +18,20 @@ function transliterateField(frm) {
     frm.resultName.value = res;
 }
 
-function fixYear(text) {
-	src = text.replace(/\u00A0/g, ' ')
-    return src.replace(/ год]]/g, "]] год");
+function fixYear(t) {
+	t = t.replace(/\u00A0/g, ' ')
+    return t.replace(/ год]]/g, "]] год");
 }
 
 function fixSpelling(t) {
 	t = t.replace(/дзтв/g, 'дcтв')
-	t = t.replace(/дзьдз/g, 'ддз')	
-	t = t.replace(/травень/g, 'май')	
-	t = t.replace(/траўня/g, 'мая')	
-	t = t.replace(/зь /g, 'з ')	
+	t = t.replace(/дзьдз/g, 'ддз')
+	t = t.replace(/травень/g, 'май')
+	t = t.replace(/траўня/g, 'мая')
+	t = t.replace(/зь /g, 'з ')
+	t = t.replace(/Менск/g, 'Мінск')
+	t = t.replace(/Расе/g, 'Расі')
+	t = t.replace(/ году/g, ' года')	
     return t;
 }
 
@@ -91,6 +94,9 @@ function fixSoft(text) {
 					out += "'";
 				else out += prev;
 			}
+			
+			if ((preprev.toLowerCase() == "л") && L[next.toLowerCase()] && (curr.toLowerCase() != "л"))
+				out += prev;
 		}
 		
         if (curr.toLowerCase() != "ь")
