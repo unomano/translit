@@ -24,14 +24,22 @@ function fixYear(t) {
 }
 
 function fixSpelling(t) {
+	t = t.replace(/ й /g, ' і ')
+	t = t.replace(/ ня /g, ' не ')
+	t = t.replace(/дзк/g, 'дcк')
 	t = t.replace(/дзтв/g, 'дcтв')
 	t = t.replace(/дзьдз/g, 'ддз')
 	t = t.replace(/травень/g, 'май')
 	t = t.replace(/траўня/g, 'мая')
-	t = t.replace(/зь /g, 'з ')
+	t = t.replace(/ зь /g, ' з ')
 	t = t.replace(/Менск/g, 'Мінск')
+	t = t.replace(/Гарадзе/g, 'Гродзе')
+	t = t.replace(/Берасьцейск/g, 'Брэсцк')
+	t = t.replace(/ладзімер/g, 'ладзімір')
 	t = t.replace(/Расе/g, 'Расі')
-	t = t.replace(/ году/g, ' года')	
+	t = t.replace(/Эўр/g, 'Еўр')
+	t = t.replace(/расей/g, 'расій')
+	t = t.replace(/ году/g, ' года')
     return t;
 }
 
